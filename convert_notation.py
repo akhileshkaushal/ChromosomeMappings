@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(description= \
 parser.add_argument('-c','--converter', required=True, \
 		help = \
 		'Supply ChromosomeMapping file (do not forget path) from /home/mcgaugheyd/git/ChromosomeMappings')
-parser.add_argument('-f','--file', required=True, \
+parser.add_argument('-f','--file', required=True, type=argparse.FileType('r'), \
 		help = \
 		'File to be converted. Assumed that the chr is in the first column of a space separated file')
 
@@ -39,21 +39,23 @@ def file_roller(file, converter_file):
 	converter_dict = create_conversion_dict(converter_file)
 	for line in file:
 		#line = line.decode('utf-8')
-		line = line.split()	
+		line = line.split()
+		
 		chr = line[0]
 		line[0] = converter_dict[chr]
+		if line[0] == '':
+			continue
 		print('\t'.join(line))
 
 def main():
 	args = parser.parse_args()
 	file = args.file
-	if file.split('.')[-1] == 'gz':
-		file = gzip.open(file)
+	if file.name[-2:] == 'gz':
+		file = gzip.open(file.name)
 		file = file.readlines()
 		file = [line.decode('utf-8') for line in file]
 	else:
-		file = open(file)
-
+		file = file.readlines() 
 	converter_dict = args.converter
 	file_roller(file, converter_dict)
 
