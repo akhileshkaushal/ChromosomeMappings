@@ -1,15 +1,12 @@
-#!/usr/local/Anaconda/envs/py3.5/bin/python
+#!/usr/bin/env python3
 
+# Original repo: https://github.com/dpryan79/ChromosomeMappings
 
 import argparse
 from argparse import RawTextHelpFormatter
 import gzip
 import fileinput
 import warnings
-
-# https://github.com/dpryan79/ChromosomeMappings
-# https://github.com/dpryan79/ChromosomeMappings/blob/master/GRCm38_gencode2ensembl.txt
-#converter=open('/home/mcgaugheyd/git/human_variation_landscape/GRCh38_gencode2ensembl.txt')
 
 parser = argparse.ArgumentParser()
 parser = argparse.ArgumentParser(description= \
