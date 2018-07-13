@@ -24,6 +24,11 @@ It's not always the case that a given chromosome/contig exists in all sources. A
 
 There is always a second tab-separated field above, but `KN196472.1` and `KN196473.1` simply don't exist in UCSC. So a script using these files can simply look for columns with values "" to indicate "missing".
 
+Different sized chromosomes/contigs
+-----------------------------------
+
+Please note that while the sequence contained in one system may be completely present in another, the coordinates used may not be the same. This is commonly seen with Ensembl chromosome/contig names for "alt-scaffolds", "fix-patches", and "novel-patches". Ensembl will place "NNN" on either side of the sequence so that the patched or scaffolded sequence has the appropriate position compared to the chromosome it's related to. In NCBI, these sequences are not N-padded, so while the sequences are the same, the positions are offset from each other. Such cases are treated as with missing chromosomes/contigs.
+
 Ambiguous/multi-way mappings
 ----------------------------
 
@@ -40,3 +45,8 @@ Note
 Note that some data sources are absent. For example, wormbase has not been included, since it's chromosome naming system is identical to that in Ensembl.
 
 Please submit a pull request or an issue if you find any errors!
+
+Galaxy tool
+-----------
+
+These mapping tables can be use with the [replace_chromosome_names](https://toolshed.g2.bx.psu.edu/view/earlhaminst/replace_chromosome_names/) Galaxy tool to replace chromosome names in a tabular dataset in [Galaxy](https://galaxyproject.org/).
