@@ -1,10 +1,11 @@
-#!/usr/local/Anaconda/envs/py3.4.3/bin/python
+#!/usr/local/Anaconda/envs/py3.5/bin/python
 
 
 import argparse
 from argparse import RawTextHelpFormatter
 import gzip
 import fileinput
+import warnings
 
 # https://github.com/dpryan79/ChromosomeMappings
 # https://github.com/dpryan79/ChromosomeMappings/blob/master/GRCm38_gencode2ensembl.txt
@@ -24,6 +25,7 @@ parser.add_argument('-f','--file', required=True, type=argparse.FileType('r'), \
 		help = \
 		'File to be converted. Assumed that the chr is in the first column of a space separated file')
 
+# read in dpryan converter file and turns into a dict for conversion
 def create_conversion_dict(converter_file):
 	converter_dict = {}
 	converter = open(converter_file)
@@ -35,14 +37,21 @@ def create_conversion_dict(converter_file):
 			converter_dict[line[0]] = ''
 	return(converter_dict)
 
+# reads in input file
 def file_roller(file, converter_file):
 	converter_dict = create_conversion_dict(converter_file)
 	for line in file:
-		#line = line.decode('utf-8')
+		line = line.decode('utf-8')
 		line = line.split()
-		
+		# hard coded to assume chr is first entry
 		chr = line[0]
-		line[0] = converter_dict[chr]
+		# convert!
+		line_copy = line[0]
+		try:
+			line[0] = converter_dict[chr]
+		except:
+			warnings.warn("\nWarning! " + line_copy + " could not be converted! Line being skipped!")
+			continue
 		if line[0] == '':
 			continue
 		print('\t'.join(line))
@@ -50,12 +59,12 @@ def file_roller(file, converter_file):
 def main():
 	args = parser.parse_args()
 	file = args.file
+	# if ends in gz, assume it is gzip
 	if file.name[-2:] == 'gz':
-		file = gzip.open(file.name)
-		file = file.readlines()
-		file = [line.decode('utf-8') for line in file]
+		file = gzip.open(file.name)	
+	# other just open it
 	else:
-		file = file.readlines() 
+		file = open(file.name, 'rb') 
 	converter_dict = args.converter
 	file_roller(file, converter_dict)
 
